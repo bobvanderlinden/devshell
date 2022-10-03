@@ -39,17 +39,19 @@ in
       };
     };
   };
+  config = mkIf (cfg.hosts != {})
+    {
+      warnings = optional (!pkgs.stdenv.isLinux) "services.usershosts only works on Linux. Host entries will not be applied on this system.";
 
-  config = mkIf (cfg.hosts != {}) {
-    env = [
-      {
-        name = "HOSTS_FILE";
-        value = "${hostsFile}";
-      }
-      {
-        name = "LD_PRELOAD";
-        prefix = "${cfg.package}/lib/libuserhosts.so";
-      }
-    ];
-  };
+      env = [
+        {
+          name = "HOSTS_FILE";
+          value = "${hostsFile}";
+        }
+        {
+          name = "LD_PRELOAD";
+          prefix = "${cfg.package}/lib/libuserhosts.so";
+        }
+      ];
+    };
 }
